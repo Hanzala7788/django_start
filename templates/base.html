@@ -9,9 +9,10 @@
 
     <h1>Hello Django</h1>
 
-    <form action="">
+    <form action="/articles/" method="get" >
         <input type="text" name="q">
-        <input type="submit" >
+        <input type="submit" value="Search">
+
     </form>
 
     {% block content %}{% endblock content %}
