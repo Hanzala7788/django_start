@@ -2,8 +2,10 @@ from django.shortcuts import render
 from .models import Article
 
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from .models import Article
+from django.views.decorators.csrf import csrf_protect
+
 
 def article_search_view(request):
     query_dict = request.GET
@@ -37,11 +39,13 @@ def article_detail_view(request, id=None):
     }
     return render(request, "articles/detail.html", context=context)
 
-# def article_detail_view(request, id=None):
-#     article_obj = None
-#     if id is not None:
-#         article_obj = Article.objects.get(id = id)
-#     context = {
-#         "oject": article_obj,
-#     }
-#     return render(request, "articles/detail.html", context=context)
+
+def article_create_view(request):
+    context = {}
+    if request.method == "POST":
+        title = request.POST.get("title")
+        content = request.POST.get("content")
+        articles_obj = Article.objects.create(title=title, content=content)
+        context["object"] = articles_obj
+        context["created"] = True
+    return render(request, "articles/create.html", context=context)
