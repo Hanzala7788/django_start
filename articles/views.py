@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render
 from .models import Article
-from django.views.decorators.csrf import csrf_protect
+from .form import ArticleForm
 
 
 def article_search_view(request):
@@ -42,12 +42,17 @@ def article_detail_view(request, id=None):
 
 @login_required
 def article_create_view(request):
-    
-    context = {}
-    if request.method == "POST":
-        title = request.POST.get("title")
-        content = request.POST.get("content")
-        articles_obj = Article.objects.create(title=title, content=content)
+    form = ArticleForm(request.POST or None)
+
+    context = {
+        "form": form
+    }
+    if form.is_valid():
+        articles_obj = form.save()
+        context['form'] = ArticleForm()
+        # title = form.cleaned_data.get("title")
+        # content = form.cleaned_data.get("content")
+        # articles_obj = Article.objects.create(title=title, content=content)
         context["object"] = articles_obj
         context["created"] = True
     return render(request, "articles/create.html", context=context)
